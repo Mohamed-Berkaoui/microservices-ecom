@@ -12,13 +12,11 @@ async function createNewOrder(req, res, next) {
       return res.status(400).json({ message: "user not found" });
     }
 
-
-try {
-       await axios.post(`${productServiceUrl}/check-decrease`, {order});
-
-} catch (error) {
-    throw new Error('unavalable product or unavailable quantity')
-}
+    try {
+      await axios.post(`${productServiceUrl}/check-decrease`, { order });
+    } catch (error) {
+      throw new Error("unavalable product or unavailable quantity");
+    }
     const newOrder = await orderModel.insertOne({ userId, order });
     // console.log("first")
     res.json({ data: newOrder });
@@ -27,11 +25,20 @@ try {
   }
 }
 
-async function getAllOrders(req, res) {
+async function getMyOrders(req, res, next) {
+  try {
+    const userId = req.params.userId;
+    const userData = await axios.get(`${userServiceUrl}/infos/${userId}`);
+    if (!userData) {
+      return res.status(400).json({ message: "user not found" });
+    }
 
+    const userOrders = await orderModel.find({ userId });
 
-
-
+    res.json({ data: userOrders });
+  } catch (error) {
+    next(error);
+  }
 }
 
-module.exports={createNewOrder,getAllOrders}
+module.exports = { createNewOrder, getMyOrders };

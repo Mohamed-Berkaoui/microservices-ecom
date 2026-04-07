@@ -1,12 +1,12 @@
 const express = require("express");
 const connectToDb = require("./utils/connectToDb");
-const { createNewOrder, getAllOrders } = require("./controllers/order");
+const { createNewOrder, getMyOrders } = require("./controllers/order");
 
 const app = express();
 
 app.use(express.json());
 app.post("/", createNewOrder);
-app.get("/", getAllOrders);
+app.get("/:userId", getMyOrders);
 
 app.all("*all", function (req, res) {
   res.json({ message: "404 not found" });

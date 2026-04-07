@@ -4,13 +4,14 @@ const productModel = require("../model/product");
  * @todo add user id
  */
 async function createProduct(req, res, next) {
+
   try {
-    const newProduct = await productModel.insertOne(req.body);
-    res.json(newProduct);
+    const newProduct = await productModel.insertOne( {...req.body,user:req.headers.authorization});
+    res.json(newProduct); 
   } catch (error) {
-    next(error);
+    next(error); 
   }
-}
+}  
 
 async function getAllProducts(req, res, next) {
   try {
